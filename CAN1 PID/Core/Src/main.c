@@ -96,10 +96,11 @@ int main(void)
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
 	HAL_TIM_Base_Start_IT(&htim2);
-	CAN_FilterInit();//使用过滤器
-	PID_Init(&Speed_Sys.Speed_PID,1,0,0,1000,100,0,3000);//最大误差4000 容许死线100 转速3000 //最大误差如果设太小，小于3000，电机开始时会由于速度为零，误差为3000，最大误差为1000，导致无限反转，无法转起来
+	CAN_FilterInit();//过滤器初始化
+	PID_Init(&Speed_Sys.Speed_PID,1,0,0,4000,100,0,3000);//最大误差4000 容许死线100 转速3000 //最大误差如果设太小，小于3000，电机开始时会由于速度为零，误差为3000，最大误差为1000，导致无限反转，无法转起来
+	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_1,GPIO_PIN_RESET);
   /* USER CODE END 2 */
-
+	
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)

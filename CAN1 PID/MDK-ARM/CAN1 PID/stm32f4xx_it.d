@@ -34,3 +34,4 @@ can1 pid\stm32f4xx_it.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_e
 can1 pid\stm32f4xx_it.o: ../Core/Inc/stm32f4xx_it.h
 can1 pid\stm32f4xx_it.o: .\motor\robo_base.h
 can1 pid\stm32f4xx_it.o: F:\Keil 5\ARM\ARMCC\Bin\..\include\math.h
+can1 pid\stm32f4xx_it.o: ../Core/Inc/can.h

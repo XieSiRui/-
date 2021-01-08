@@ -24,16 +24,17 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "robo_base.h"
+#include "can.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN TD */
+
 extern CAN_TxHeaderTypeDef TxMessage;
 extern CAN_RxHeaderTypeDef RxMessage;
 extern uint8_t TxData[8];
 extern uint8_t RxData[8];
 extern Speed_System Speed_Sys;		//速度环控电机
-
 /* USER CODE END TD */
 
 /* Private define ------------------------------------------------------------*/
@@ -215,17 +216,22 @@ void CAN1_RX0_IRQHandler(void)
 	if(HAL_CAN_GetRxMessage(&hcan1,CAN_RX_FIFO0,&RxMessage,RxData)==HAL_OK)//如果有接收到数据，亮PC1
 	{
 		HAL_GPIO_WritePin(GPIOC,GPIO_PIN_1,GPIO_PIN_SET);
-	}
 	//速度环
-	Speed_Sys.Info.Speed=RxData[2];
-	Speed_Sys.Info.Speed<<=8;
-	Speed_Sys.Info.Speed|=RxData[3];
-	Speed_Sys.Info.Electric=RxData[4];
-	Speed_Sys.Info.Electric<<=8;
-	Speed_Sys.Info.Electric|=RxData[5];
-	Speed_Sys.Info.Temperature=RxData[6];
+		Speed_Sys.Speed_Info.Angle=RxData[0];
+		Speed_Sys.Speed_Info.Angle<<=8;
+		Speed_Sys.Speed_Info.Angle|=RxData[1];
+
+		Speed_Sys.Speed_Info.Speed=RxData[2];
+		Speed_Sys.Speed_Info.Speed<<=8;
+		Speed_Sys.Speed_Info.Speed|=RxData[3];
+
+		Speed_Sys.Speed_Info.Electric=RxData[4];
+		Speed_Sys.Speed_Info.Electric<<=8;
+		Speed_Sys.Speed_Info.Electric|=RxData[5];
+
+		Speed_Sys.Speed_Info.Temperature=RxData[6];
 	
-	HAL_GPIO_WritePin(GPIOC,GPIO_PIN_1,GPIO_PIN_RESET);//本次中断结束后灭灯 本句可能因中断内容执行过快导致PC1不亮，故可注释
+	}
   /* USER CODE END CAN1_RX0_IRQn 0 */
   HAL_CAN_IRQHandler(&hcan1);
   /* USER CODE BEGIN CAN1_RX0_IRQn 1 */

@@ -30,7 +30,8 @@ typedef struct Motor_Pos_Info		//进行位置环控制的电机信息
 
 typedef struct Motor_Speed_Info		//进行速度环控制的电机信息
 {
-  int16_t Speed;					//电机速度				单位(rad/min 转/每分钟)
+  uint16_t Angle;
+	int16_t Speed;					//电机速度				单位(rad/min 转/每分钟)
   uint8_t Temperature;				//电机温度				单位(℃ 摄氏度)
   int16_t Electric;					//电流					单位(mA 毫安)
 }Motor_Speed_Info;
@@ -58,7 +59,7 @@ typedef struct pid_init_val{		//电机PID参数结构体
 
 typedef struct Pos_System			//位置环系统
 {
-  Motor_Pos_Info Info;				//位置环电机信息
+  Motor_Pos_Info Pos_Info;				//位置环电机信息
   PID Pos_PID;						//位置环PID参数
   PID Speed_PID;					//速度环PID参数
   float Tar_Pos;					//目标位置
@@ -67,7 +68,7 @@ typedef struct Pos_System			//位置环系统
 
 typedef struct Speed_System			//速度环系统
 {
-  Motor_Speed_Info Info;			//速度环电机信息
+  Motor_Speed_Info Speed_Info;			//速度环电机信息
   PID Speed_PID;					//速度环PID参数
   float Tar_Speed;					//目标速度 debug时改动的是此处
   uint8_t Motor_Num;				//电机号码

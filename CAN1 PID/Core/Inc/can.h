@@ -34,7 +34,6 @@ extern "C" {
 extern CAN_HandleTypeDef hcan1;
 
 /* USER CODE BEGIN Private defines */
-void CAN_Transmit(void);
 void CAN_FilterInit(void);
 /* USER CODE END Private defines */
 

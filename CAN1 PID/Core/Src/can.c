@@ -19,22 +19,14 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "can.h"
-
+#include "robo_base.h"
 /* USER CODE BEGIN 0 */
+
 extern CAN_TxHeaderTypeDef TxMessage;
 extern CAN_RxHeaderTypeDef RxMessage;
 extern uint8_t RxData[8];
 CAN_FilterTypeDef FilterInit;
 
-void CAN_Transmit()//发送函数
-{
-	TxMessage.DLC=8;            //长度8
-	TxMessage.StdId=0x12;       //标准标识符
-	TxMessage.ExtId=0x12;       //扩展标识符
-	TxMessage.IDE=CAN_ID_STD;   //无
-	TxMessage.RTR=CAN_RTR_DATA; //无
-	TxMessage.TransmitGlobalTime=DISABLE;
-}
 void CAN_FilterInit()//过滤器初始化 无过滤
 {
 	HAL_CAN_Start(&hcan1);
@@ -56,7 +48,7 @@ void CAN_FilterInit()//过滤器初始化 无过滤
 CAN_HandleTypeDef hcan1;
 
 /* CAN1 init function */
-void MX_CAN1_Init(void)//1M bps
+void MX_CAN1_Init(void)//~1M bps
 {
 
   hcan1.Instance = CAN1;
@@ -64,7 +56,7 @@ void MX_CAN1_Init(void)//1M bps
   hcan1.Init.Mode = CAN_MODE_NORMAL;
   hcan1.Init.SyncJumpWidth = CAN_SJW_1TQ;
   hcan1.Init.TimeSeg1 = CAN_BS1_6TQ;
-  hcan1.Init.TimeSeg2 = CAN_BS2_7TQ;
+  hcan1.Init.TimeSeg2 = CAN_BS2_8TQ;
   hcan1.Init.TimeTriggeredMode = DISABLE;
   hcan1.Init.AutoBusOff = DISABLE;
   hcan1.Init.AutoWakeUp = DISABLE;

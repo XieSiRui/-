@@ -87,7 +87,7 @@ void Motor_Pos_Analysis(ROBO_BASE* Robo,uint8_t* RX_Data,uint32_t Motor_Num)
     case 0x203:P_Motor=&Robo->Pos_MotorRB;break;
     case 0x204:P_Motor=&Robo->Pos_MotorLB;break;
 	default:break;
-  }if(P_Motor!=NULL) Pos_Info_Analysis(&P_Motor->Info,RX_Data);
+  }if(P_Motor!=NULL) Pos_Info_Analysis(&P_Motor->Pos_Info,RX_Data);
 }
 
 //--------------------------------------------------------------------------------------------------//
@@ -118,7 +118,7 @@ void Motor_Speed_Analysis(ROBO_BASE* Robo,uint8_t* RX_Data,uint32_t Motor_Num)
     case 0x203:S_Motor=&Robo->Speed_MotorRB;break;
     case 0x204:S_Motor=&Robo->Speed_MotorLB;break;
 	default:break;
-  }if(S_Motor!=NULL) Speed_Info_Analysis(&S_Motor->Info,RX_Data);
+  }if(S_Motor!=NULL) Speed_Info_Analysis(&S_Motor->Speed_Info,RX_Data);
 }
 
 //--------------------------------------------------------------------------------------------------//
@@ -333,11 +333,11 @@ void PID_Init(PID *pid, float Kp, float Ki, float Kd, float error_max, float dea
 	pid->Kp = Kp;                      
 	pid->Ki = Ki;
 	pid->Kd = Kd;
-	pid->error_max = error_max;       //最大误差
-	pid->output_max = output_max;         //最大输出
-	pid->dead_line = dead_line;          //四死线
+	pid->error_max = error_max;       //误差最大值
+	pid->output_max = output_max;         //输出最大值
+	pid->dead_line = dead_line;          //死区
 	
-	pid->intergral_max = intergral_max;         //积分最大    
+	pid->intergral_max = intergral_max;         //误差累积最大值    
 	
 	pid->error = 0;                  //误差
 	pid->error_last = 0;               //上一次误差
@@ -411,7 +411,7 @@ void PID_General_Cal(PID *pid, float fdbV, float tarV,uint8_t moto_num,uint8_t *
 //--------------------------------------------------------------------------------------------------//
 void PID_Pos_Cal(Pos_System* Pos_Motor,uint8_t *Tx_msg)       
 {
-	Pos_Motor->Pos_PID.error =  Pos_Motor->Tar_Pos - Pos_Motor->Info.Abs_Angle;
+	Pos_Motor->Pos_PID.error =  Pos_Motor->Tar_Pos - Pos_Motor->Pos_Info.Abs_Angle;
 	if(Pos_Motor->Pos_PID.error > Pos_Motor->Pos_PID.error_max)
 		Pos_Motor->Pos_PID.error = Pos_Motor->Pos_PID.error_max;
 	if(Pos_Motor->Pos_PID.error < -Pos_Motor->Pos_PID.error_max)
@@ -437,7 +437,7 @@ void PID_Pos_Cal(Pos_System* Pos_Motor,uint8_t *Tx_msg)
 	if(Pos_Motor->Pos_PID.output < -Pos_Motor->Pos_PID.output_max)
 		Pos_Motor->Pos_PID.output = -Pos_Motor->Pos_PID.output_max;
 	
-		Pos_Motor->Speed_PID.error =  Pos_Motor->Pos_PID.output - Pos_Motor->Info.Speed;
+		Pos_Motor->Speed_PID.error =  Pos_Motor->Pos_PID.output - Pos_Motor->Pos_Info.Speed;
 	if(Pos_Motor->Speed_PID.error > Pos_Motor->Speed_PID.error_max)
 		Pos_Motor->Speed_PID.error = Pos_Motor->Speed_PID.error_max;
 	if(Pos_Motor->Speed_PID.error < -Pos_Motor->Speed_PID.error_max)
@@ -464,7 +464,8 @@ void PID_Pos_Cal(Pos_System* Pos_Motor,uint8_t *Tx_msg)
 		Pos_Motor->Speed_PID.output = -Pos_Motor->Speed_PID.output_max;
 	
 	
-	Tx_msg[Pos_Motor->Motor_Num*2]=((int16_t)Pos_Motor->Speed_PID.output)>>8;Tx_msg[Pos_Motor->Motor_Num*2+1]=(int16_t)Pos_Motor->Speed_PID.output;
+	Tx_msg[Pos_Motor->Motor_Num*2]=((int16_t)Pos_Motor->Speed_PID.output)>>8;
+	Tx_msg[Pos_Motor->Motor_Num*2+1]=(int16_t)Pos_Motor->Speed_PID.output;
 }
 
 //--------------------------------------------------------------------------------------------------//
@@ -482,7 +483,7 @@ void PID_Pos_Cal(Pos_System* Pos_Motor,uint8_t *Tx_msg)
 void PID_Speed_Cal(Speed_System* Speed_Motor,uint8_t *Tx_msg)
 {
 
-	Speed_Motor->Speed_PID.error =  Speed_Motor->Tar_Speed - Speed_Motor->Info.Speed;
+	Speed_Motor->Speed_PID.error =  Speed_Motor->Tar_Speed - Speed_Motor->Speed_Info.Speed;
 	if(Speed_Motor->Speed_PID.error > Speed_Motor->Speed_PID.error_max)
 		Speed_Motor->Speed_PID.error = Speed_Motor->Speed_PID.error_max;
 	if(Speed_Motor->Speed_PID.error < -Speed_Motor->Speed_PID.error_max)
@@ -506,7 +507,7 @@ void PID_Speed_Cal(Speed_System* Speed_Motor,uint8_t *Tx_msg)
 	if(Speed_Motor->Speed_PID.output > Speed_Motor->Speed_PID.output_max)
 		Speed_Motor->Speed_PID.output = Speed_Motor->Speed_PID.output_max;
 	if(Speed_Motor->Speed_PID.output < -Speed_Motor->Speed_PID.output_max)
-		Speed_Motor->Speed_PID.output = -Speed_Motor->Speed_PID.output_max;
+		Speed_Motor->Speed_PID.output = -Speed_Motor->Speed_PID.output_max;//tar_speed为0的时候output永远是0，是无法跑起来的
 	
 	Tx_msg[Speed_Motor->Motor_Num*2] = ((int16_t)Speed_Motor->Speed_PID.output)>>8;
 	Tx_msg[Speed_Motor->Motor_Num*2+1] = (int16_t)Speed_Motor->Speed_PID.output;
