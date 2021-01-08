@@ -30,10 +30,9 @@
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN TD */
 
-extern CAN_TxHeaderTypeDef TxMessage;
-extern CAN_RxHeaderTypeDef RxMessage;
-extern uint8_t TxData[8];
-extern uint8_t RxData[8];
+CAN_RxHeaderTypeDef RxMessage;
+uint8_t TxData[8];
+uint8_t RxData[8];
 extern Speed_System Speed_Sys;		//速度环控电机
 /* USER CODE END TD */
 
@@ -216,21 +215,7 @@ void CAN1_RX0_IRQHandler(void)
 	if(HAL_CAN_GetRxMessage(&hcan1,CAN_RX_FIFO0,&RxMessage,RxData)==HAL_OK)//如果有接收到数据，亮PC1
 	{
 		HAL_GPIO_WritePin(GPIOC,GPIO_PIN_1,GPIO_PIN_SET);
-	//速度环
-		Speed_Sys.Speed_Info.Angle=RxData[0];
-		Speed_Sys.Speed_Info.Angle<<=8;
-		Speed_Sys.Speed_Info.Angle|=RxData[1];
-
-		Speed_Sys.Speed_Info.Speed=RxData[2];
-		Speed_Sys.Speed_Info.Speed<<=8;
-		Speed_Sys.Speed_Info.Speed|=RxData[3];
-
-		Speed_Sys.Speed_Info.Electric=RxData[4];
-		Speed_Sys.Speed_Info.Electric<<=8;
-		Speed_Sys.Speed_Info.Electric|=RxData[5];
-
-		Speed_Sys.Speed_Info.Temperature=RxData[6];
-	
+		Save_Data(&Speed_Sys,RxData);//速度环存储
 	}
   /* USER CODE END CAN1_RX0_IRQn 0 */
   HAL_CAN_IRQHandler(&hcan1);
@@ -256,6 +241,21 @@ void TIM2_IRQHandler(void)
 }
 
 /* USER CODE BEGIN 1 */
+void Save_Data(Speed_System* Sys,uint8_t *Rx_Data)
+{
+		Speed_Sys.Speed_Info.Angle=RxData[0];
+		Speed_Sys.Speed_Info.Angle<<=8;
+		Speed_Sys.Speed_Info.Angle|=RxData[1];
 
+		Speed_Sys.Speed_Info.Speed=RxData[2];
+		Speed_Sys.Speed_Info.Speed<<=8;
+		Speed_Sys.Speed_Info.Speed|=RxData[3];
+
+		Speed_Sys.Speed_Info.Electric=RxData[4];
+		Speed_Sys.Speed_Info.Electric<<=8;
+		Speed_Sys.Speed_Info.Electric|=RxData[5];
+
+		Speed_Sys.Speed_Info.Temperature=RxData[6];
+}
 /* USER CODE END 1 */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

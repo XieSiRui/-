@@ -28,7 +28,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "robo_base.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -58,6 +58,7 @@ void PendSV_Handler(void);
 void SysTick_Handler(void);
 void CAN1_RX0_IRQHandler(void);
 void TIM2_IRQHandler(void);
+void Save_Data(Speed_System* Sys,uint8_t *Rx_Data);																
 /* USER CODE BEGIN EFP */
 
 /* USER CODE END EFP */

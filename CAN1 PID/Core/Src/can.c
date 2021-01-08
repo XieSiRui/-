@@ -22,9 +22,6 @@
 #include "robo_base.h"
 /* USER CODE BEGIN 0 */
 
-extern CAN_TxHeaderTypeDef TxMessage;
-extern CAN_RxHeaderTypeDef RxMessage;
-extern uint8_t RxData[8];
 CAN_FilterTypeDef FilterInit;
 
 void CAN_FilterInit()//过滤器初始化 无过滤

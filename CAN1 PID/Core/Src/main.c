@@ -31,11 +31,7 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-CAN_TxHeaderTypeDef TxMessage;
-CAN_RxHeaderTypeDef RxMessage;
 Speed_System Speed_Sys;		//速度环控电机
-uint8_t RxData[8];
-uint8_t TxData[8];
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
